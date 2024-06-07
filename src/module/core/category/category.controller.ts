@@ -6,7 +6,7 @@ import { Route } from 'src/shared/decorate/route.decorate';
 
 @Route('categories')
 export class CategoryController {
-  constructor(private readonly categoryService: CategoryService) {}
+  constructor(private readonly categoryService: CategoryService) { }
 
   @Post()
   create(@Body() createCategoryDto: CreateCategoryDto) {

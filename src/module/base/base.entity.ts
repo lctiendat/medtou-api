@@ -1,10 +1,17 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsDateString } from "class-validator";
-import { Column, CreateDateColumn, Entity, UpdateDateColumn } from "typeorm";
+import { IsBoolean, IsDateString, IsUUID } from "class-validator";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { faker } from '@faker-js/faker';
 
 @Entity()
 export class BaseEntity {
+
+    @PrimaryGeneratedColumn('uuid')
+    @IsUUID()
+    @ApiProperty({
+        example: faker.string.uuid()
+    })
+    id?: string
 
     @Column({
         default: false

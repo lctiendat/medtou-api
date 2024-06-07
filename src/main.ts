@@ -3,9 +3,12 @@ import { AppModule } from './app.module';
 import { envConfig } from '@setup';
 import setupSwagger from './setup/swagger';
 import { Logger } from '@nestjs/common';
+import { HttpExceptionFilter } from './shared/filter/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.useGlobalFilters(new HttpExceptionFilter)
+
   if (envConfig.NODE_ENV !== 'prod') {
     setupSwagger(app)
   }

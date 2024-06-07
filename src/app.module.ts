@@ -1,30 +1,32 @@
 import { Logger, Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
 import { envConfig } from './setup/env';
-import { CategoryModule } from './module/core/category/category.module';
-import { UserModule } from './user/user.module';
+import { CategoryModule, UserModule } from '@module';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from '@entity';
 
-@Module({ 
+@Module({
   imports: [
-    MongooseModule.forRoot(envConfig.MONGO_URL, {
-      connectionFactory: (connection) => {
-        const logger = new Logger('__Database__')
-        connection.on('connected', () => { 
-          logger.log('Connected to MongoDB successfully');
-        });
-        connection.on('error', (err) => {
-          logger.error(`MongoDB connection error: ${err}`);
-        })
-        connection._events.connected();
-        return connection;
-      },
-    },
-    ),
+    TypeOrmModule.forRoot({
+      'type': 'mysql',
+      'host': envConfig.DB_HOST,
+      'port': envConfig.DB_PORT,
+      'username': envConfig.DB_USERNAME,
+      'password': envConfig.DB_PASSWORD,
+      'database': envConfig.DB_NAME,
+      'autoLoadEntities': true,
+      'synchronize': true,
+    }),
+    PassportModule,
+    JwtModule.register({
+      secret: 'access_secret',
+      signOptions: { expiresIn: '15m' },
+    }),
     CategoryModule,
     UserModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { } 

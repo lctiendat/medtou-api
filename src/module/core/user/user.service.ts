@@ -1,24 +1,31 @@
-import { Injectable } from '@nestjs/common';
-import { User } from '@entity';
+import { ConflictException, Injectable } from '@nestjs/common';
+import { UserEntity } from '@entity';
 import * as bcrypt from 'bcrypt';
 import { BaseService } from '@service';
 import { UserRepository } from '@repository';
+import { PickType } from '@nestjs/swagger';
 
 @Injectable()
-export class UserService extends BaseService<User> {
+export class UserService extends BaseService<UserEntity> {
   constructor(
     public readonly repo: UserRepository
   ) {
     super(repo)
   }
 
-  async create(username: string, password: string): Promise<User> {
-    const user = this.repo.create({ username});
-    return this.repo.save(user);
+  async create(data: any): Promise<UserEntity | any> {
+
+    let user: UserEntity = await this.findByUsername(data.email)
+
+    if (!!user && !!user.email) {
+      throw new ConflictException(`Email ${data.email} already exists`)
+    }
+    const newUser = this.repo.create(data);
+    return await this.repo.save(newUser)
   }
 
-  async findByUsername(username: string): Promise<User> {
-    return this.repo.findOne({ where: { username } });
+  async findByUsername(email: string): Promise<UserEntity> {
+    return this.repo.findOne({ where: { email } });
   }
 
   async updateRefreshToken(userId: any, refreshToken: string): Promise<void> {

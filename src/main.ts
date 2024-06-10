@@ -2,12 +2,16 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { envConfig } from '@setup';
 import setupSwagger from './setup/swagger';
-import { Logger } from '@nestjs/common';
-import { HttpExceptionFilter } from './shared/filter/http-exception.filter';
+import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
+import { AllExceptionsFilter } from './shared/filter/all-exceptions.filter';
+import { ResponseInterceptor } from './shared/filter/response.interceptor';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.useGlobalFilters(new HttpExceptionFilter)
+async function bootstrap(): Promise<void> {
+  const app: INestApplication<any> = await NestFactory.create(AppModule);
+  app.useGlobalFilters(new AllExceptionsFilter());
+  app.useGlobalInterceptors(new ResponseInterceptor());
+  app.useGlobalPipes(new ValidationPipe());
+
 
   if (envConfig.NODE_ENV !== 'prod') {
     setupSwagger(app)

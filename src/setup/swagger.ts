@@ -9,7 +9,14 @@ export default function setupSwagger(app: INestApplication): void {
     .setDescription(
       'The Medifast API description',
     ).setVersion('1.0')
-    .addBearerAuth();
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+      'access-token',
+    );
 
   const document = SwaggerModule.createDocument(app, documentBuilder.build());
   SwaggerModule.setup('documentation', app, document);

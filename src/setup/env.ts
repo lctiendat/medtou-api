@@ -13,6 +13,12 @@ const DB_USERNAME = process.env.DB_USERNAME;
 const DB_PASSWORD = process.env.DB_PASSWORD;
 const DB_NAME = process.env.DB_NAME;
 
+const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET
+const JWT_ACCESS_TIME = process.env.JWT_ACCESS_TIME
+
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET
+const JWT_REFRESH_TIME = process.env.JWT_REFRESH_TIME
+
 
 export const envConfig = {
     NODE_ENV,
@@ -24,5 +30,9 @@ export const envConfig = {
     DB_USERNAME,
     DB_PASSWORD,
     DB_NAME,
-    MONGO_URL
+    MONGO_URL,
+    JWT_ACCESS_SECRET,
+    JWT_ACCESS_TIME,
+    JWT_REFRESH_SECRET,
+    JWT_REFRESH_TIME,
 }

@@ -1,50 +1,52 @@
-import { Body, Post, Request, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, NotFoundException, Post, Request, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import * as bcrypt from 'bcrypt';
-import { UserService } from "@service";
+import { AuthService, UserService } from "@service";
 import { JwtService } from "@nestjs/jwt";
 import { Route } from "src/shared/decorate/route.decorate";
-import { User } from "@entity";
+import { UserEntity } from "@entity";
+import { SigninDto, SignupDto, TokenDto } from "@dto";
+import { JwtAuthGuard } from "../guard/jwt-auth.guard";
+import { ApiBearerAuth } from "@nestjs/swagger";
+import { envConfig } from "@setup";
 
 
 @Route('auth')
 export class AuthController {
     constructor(
-        private userService: UserService,
+        private authService: AuthService,
         private jwtService: JwtService,
+        private userService: UserService
     ) { }
 
-    @Post('register')
-    async register(@Body() body: { username: string, password: string }) : Promise<User> {
-        const user = await this.userService.create(body.username, body.password);
-        return user;
+    @Post('signup')
+    async register(@Body() body: SignupDto): Promise<UserEntity | any> {
+        const data = await this.authService.signup(body);
+        return {
+            message: 'Register successful',
+            data
+        };
     }
 
-    @Post('login')
-    async login(@Body() body: { username: string, password: string }) {
-        const user = await this.userService.findByUsername(body.username);
-        if (user) {
-            const payload = { username: user.username, sub: user.id };
-            const accessToken = this.jwtService.sign(payload, { secret: 'access_secret', expiresIn: '15m' });
-            const refreshToken = this.jwtService.sign(payload, { secret: 'refresh_secret', expiresIn: '7d' });
+    @Post('signin')
+    async login(@Body() body: SigninDto): Promise<UserEntity | any> {
 
-            await this.userService.updateRefreshToken(user?.id, refreshToken);
+        const data = await this.authService.signin(body)
 
-            return { accessToken, refreshToken };
-        }
-        return 'Invalid credentials';
+        return {
+            message: 'Login successful',
+            data
+        };
     }
 
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth('access-token')
     @Post('refresh')
-    async refresh(@Request() req) {
-        const user = await this.userService.findByUsername(req.user.username);
-        if (user && user.refreshToken === req.body.refreshToken) {
-            const payload = { username: user.username, sub: user.id };
-            const accessToken = this.jwtService.sign(payload, { secret: 'access_secret', expiresIn: '15m' });
-
-            return { accessToken };
-        }
-        return 'Invalid refresh token';
+    async refresh(@Request() req: any, @Body() body: TokenDto): Promise<any> {
+        const data = await this.authService.getAccessToken(req, body)
+        return {
+            message: 'Get access token successful',
+            data
+        };
     }
 };

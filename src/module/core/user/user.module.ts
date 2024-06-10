@@ -1,20 +1,31 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from "@entity";
+import { UserEntity } from "@entity";
 import { AuthController, UserController } from "@controller";
-import { UserService, } from "@service";
+import { AuthService, UserService, } from "@service";
 import { UserRepository } from "@repository";
-import { JwtService } from "@nestjs/jwt";
+import { JwtModule, JwtService } from "@nestjs/jwt";
+import { PassportModule } from "@nestjs/passport";
+import { envConfig } from "@setup";
+import { JwtStrategy } from "./guard/jwt.strategy";
+
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User])
+    TypeOrmModule.forFeature([UserEntity]),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.register({
+      secret: envConfig.JWT_ACCESS_SECRET,
+      signOptions: { expiresIn: envConfig.JWT_ACCESS_TIME },
+    })
   ],
   controllers: [UserController, AuthController],
   providers: [
     UserService,
     UserRepository,
-    JwtService
+    JwtService,
+    AuthService,
+    JwtStrategy
   ],
   exports: []
 })

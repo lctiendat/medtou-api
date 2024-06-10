@@ -4,10 +4,13 @@ import { CategoryModule, UserModule } from '@module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '@entity';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TypeOrmModule.forRoot({
       'type': 'mysql',
       'host': envConfig.DB_HOST,
@@ -20,8 +23,8 @@ import { User } from '@entity';
     }),
     PassportModule,
     JwtModule.register({
-      secret: 'access_secret',
-      signOptions: { expiresIn: '15m' },
+      secret: envConfig.JWT_ACCESS_SECRET || 'secret',
+      signOptions: { expiresIn: envConfig.JWT_ACCESS_TIME || '15m' },
     }),
     CategoryModule,
     UserModule,

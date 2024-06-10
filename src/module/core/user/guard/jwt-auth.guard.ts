@@ -18,10 +18,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     }
 
     try {
-      const payload = this.jwtService.verify(token, { secret: envConfig.JWT_ACCESS_SECRET });
+      const payload = this.jwtService?.verify(token, { secret: envConfig.JWT_ACCESS_SECRET });
       request.user = payload;
       return true;
     } catch (err) {
+      console.log(err);
+      
       throw new UnauthorizedException;
     }
   }

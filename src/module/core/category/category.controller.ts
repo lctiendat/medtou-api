@@ -1,16 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Request } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { CreateCategoryDto, UpdateCategoryDto } from '@dto';
 import { Route } from 'src/shared/decorate/route.decorate';
+import { JwtAuthGuard } from '../user/guard/jwt-auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Route('categories')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) { }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoryService.create(createCategoryDto);
+  async create(@Request() req: any, @Body() body: CreateCategoryDto): Promise<any> {
+    
+    const data = await this.categoryService.create(body, req);
+    return {
+      message: 'Create category successful',
+      data
+    }
   }
 
   @Get()

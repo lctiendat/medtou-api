@@ -43,6 +43,8 @@ export class AuthController {
     @ApiBearerAuth('access-token')
     @Post('refresh')
     async refresh(@Request() req: any, @Body() body: TokenDto): Promise<any> {
+        console.log(req.user);
+        
         const data = await this.authService.getAccessToken(req, body)
         return {
             message: 'Get access token successful',

@@ -42,7 +42,6 @@ export class AuthService extends BaseService<UserEntity> {
     const user: UserEntity = await this.userService.findByUsername(data.email)
 
     if (!!!user) {
-      console.log(user);
 
       throw new NotFoundException(`Email ${data.email} not found`)
     }
@@ -50,7 +49,7 @@ export class AuthService extends BaseService<UserEntity> {
     if (!isMatch) {
       throw new BadRequestException('Password is incorrect')
     }
-    const payload = { username: user.email, sub: user.id };
+    const payload = { username: user.email, id: user.id };
     const accessToken: string = this.jwtService.sign(payload, { secret: 'access_secret', expiresIn: '15m' });
     const refreshToken: string = this.jwtService.sign(payload, { secret: 'refresh_secret', expiresIn: '7d' });
 
@@ -68,7 +67,7 @@ export class AuthService extends BaseService<UserEntity> {
     const user = await this.userService.findByUsername(req.user.username);
 
     if (user && user.refreshToken === body.refreshToken) {
-      const payload = { username: user.email, sub: user.id };
+      const payload = { username: user.email, id: user.id };
       const accessToken = this.jwtService.sign(payload, { secret: envConfig.JWT_ACCESS_SECRET, expiresIn: envConfig.JWT_ACCESS_TIME });
       return accessToken;
     }

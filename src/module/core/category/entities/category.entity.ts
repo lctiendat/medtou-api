@@ -2,7 +2,7 @@ import { BaseEntity } from "@entity";
 import { faker } from "@faker-js/faker";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsOptional, IsString, IsUUID } from "class-validator";
-import { Column, Entity, OneToMany } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 
 @Entity('categories')
 export class CategoryEntity extends BaseEntity {
@@ -14,7 +14,7 @@ export class CategoryEntity extends BaseEntity {
     name: string;
 
     @Column()
-    @IsString() 
+    @IsString()
     @ApiProperty({
         example: faker.lorem.paragraph()
     })
@@ -36,7 +36,11 @@ export class CategoryEntity extends BaseEntity {
     @ApiProperty({ example: faker.string.uuid() })
     parentId: string
 
-    @OneToMany(() => CategoryEntity, category => category.parentId)
-    parent: CategoryEntity[]
 
-}
+    @ManyToOne(() => CategoryEntity, category => category.children)
+    parent: CategoryEntity;
+
+    @OneToMany(() => CategoryEntity, category => category.parent)
+    children: CategoryEntity[];
+
+} 

@@ -43,8 +43,8 @@ export class CategoryService extends BaseService<CategoryEntity> {
 
   }
 
-  findAll() {
-    return `This action returns all category`;
+  findAll(): Promise<CategoryEntity[]> {
+    return this.repo.find()
   }
 
   findOne(id: number) {

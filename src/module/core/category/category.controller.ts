@@ -1,6 +1,6 @@
-import { Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Request } from '@nestjs/common';
+import { Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Request, Query } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import { CreateCategoryDto, UpdateCategoryDto } from '@dto';
+import { CreateCategoryDto, PaginationQueryDto, UpdateCategoryDto } from '@dto';
 import { Route } from 'src/shared/decorate/route.decorate';
 import { JwtAuthGuard } from '../user/guard/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
@@ -13,7 +13,7 @@ export class CategoryController {
   @ApiBearerAuth('access-token')
   @Post()
   async create(@Request() req: any, @Body() body: CreateCategoryDto): Promise<any> {
-    
+
     const data = await this.categoryService.create(body, req);
     return {
       message: 'Create category successful',
@@ -22,8 +22,8 @@ export class CategoryController {
   }
 
   @Get()
-  findAll() {
-    return this.categoryService.findAll();
+  async findAll(@Query() paginationQuery: PaginationQueryDto): Promise<any> {
+    return await this.categoryService.findAll();
   }
 
   @Get(':id')

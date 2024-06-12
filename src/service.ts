@@ -1,3 +1,5 @@
 export * from './module/base/base.service'
 export * from './module/core/user/user.service'
 export * from './module/core/user/service/auth.service'
+export * from './module/core/category/category.service'
+export * from './module/main/store/store.service'

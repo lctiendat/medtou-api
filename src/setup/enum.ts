@@ -2,8 +2,13 @@
 
 export enum CRUD {
     CREATE = 0,
-    READ = 1,
-    UPDATE = 2,
-    DELETE = 3,
-    ALL = 4
+    UPDATE = 1,
+    DELETE = 2
+}
+
+export enum ROLE {
+    ADMIN = 0,
+    USER = 1,
+    STORE = 2,
+    STAFF = 3,
 }

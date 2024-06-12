@@ -4,7 +4,7 @@ import { CategoryEntity, CategoryLogEntity } from '@entity';
 import { BaseService } from '@service';
 import { CategoryLogRepository, CategoryRepository } from '@repository';
 import { CRUD } from 'src/setup/enum';
-import { DataSource } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 
 @Injectable()
 export class CategoryService extends BaseService<CategoryEntity> {
@@ -18,10 +18,8 @@ export class CategoryService extends BaseService<CategoryEntity> {
   async create(data: CreateCategoryDto, req): Promise<CategoryEntity> {
     return await this.dataSource.transaction(async (entityManager) => {
       if (!!data.parentId) {
-        const cate = await this.repo.findOne({
-          where: {
-            id: data.parentId
-          }
+        const cate = await this.repo.findById({
+          id: data.parentId
         })
         if (!!!cate) {
           throw new NotFoundException('Parent category not found')
@@ -47,15 +45,56 @@ export class CategoryService extends BaseService<CategoryEntity> {
     return this.repo.find()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  async findOne(id: string): Promise<CategoryEntity> {
+    const data: CategoryEntity = await this.repo.findById(id)
+    if (!!!data) {
+      throw new NotFoundException('Category not found')
+    }
+    return data
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  async update(id: string, req: any, updateCategoryDto: UpdateCategoryDto) {
+    const data: CategoryEntity = await this.repo.findById(id)
+    if (!!!data) {
+      throw new NotFoundException('Category not found')
+    }
+    if (!!data.parentId) {
+      const cate = await this.repo.findById({
+        id: data.parentId
+      })
+      if (!!!cate) {
+        throw new NotFoundException('Parent category not found')
+      }
+    }
+    return await this.dataSource.transaction(async (entityManager: EntityManager) => {
+      await entityManager.save(
+        entityManager.create(CategoryLogEntity,
+          {
+            userId: req.user.id,
+            categoryId: data.id,
+            type: CRUD.UPDATE
+          }))
+      await this.repo.update(id, updateCategoryDto)
+      return null
+    })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: string, req: any) {
+    const data: CategoryEntity = await this.repo.findById(id)
+    if (!!!data) {
+      throw new NotFoundException('Category not found')
+    }
+
+    return await this.dataSource.transaction(async (entityManager: EntityManager) => {
+      await entityManager.save(
+        entityManager.create(CategoryLogEntity,
+          {
+            userId: req.user.id,
+            categoryId: data.id,
+            type: CRUD.DELETE
+          }))
+      await this.repo.delete(id)
+      return null
+    })
   }
 }

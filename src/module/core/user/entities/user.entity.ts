@@ -1,17 +1,19 @@
-import { BaseEntity } from "@entity";
+import { BaseEntity, StoreEntity } from "@entity";
 import { da, faker } from "@faker-js/faker";
 import { ApiProperty } from "@nestjs/swagger";
 import { Exclude, Expose } from "class-transformer";
-import { IsDateString, IsEmail, IsNotEmpty, IsNumberString, IsString } from "class-validator";
-import { BeforeInsert, Column, Entity } from "typeorm";
+import { IsDateString, IsEmail, IsNotEmpty, IsNumberString, IsOptional, IsString } from "class-validator";
+import { BeforeInsert, Column, Entity, JoinColumn, OneToOne } from "typeorm";
 import * as bcrypt from 'bcrypt';
+import { ROLE } from "src/setup/enum";
 
-export const examplePassword  = faker.internet.password()
+export const exampleUsername = 'admin@admin.com'
+export const examplePassword = 'admin@123'
 
 @Entity('users')
 export class UserEntity extends BaseEntity {
 
-    @Column()
+    @Column({ nullable: true })
     @IsNotEmpty()
     @IsString()
     @ApiProperty({
@@ -30,7 +32,7 @@ export class UserEntity extends BaseEntity {
     @IsNotEmpty()
     @IsEmail()
     @ApiProperty({
-        example: faker.internet.email()
+        example: exampleUsername
     })
     email: string
 
@@ -42,11 +44,12 @@ export class UserEntity extends BaseEntity {
     })
     phoneNumber: string
 
-    @Column()
+    @Column({
+        default: examplePassword
+    })
     @IsNotEmpty()
     @IsString()
-    // @Exclude()
-    @Expose()
+    @IsOptional()
     @ApiProperty({
         example: examplePassword
     })
@@ -59,6 +62,9 @@ export class UserEntity extends BaseEntity {
     })
     birthday: Date
 
+    @Column({ default: ROLE.USER })
+    role: number
+
     @Column({ nullable: true })
     @ApiProperty({
         example: faker.lorem.paragraph()
@@ -67,8 +73,12 @@ export class UserEntity extends BaseEntity {
     @IsString()
     refreshToken: string;
 
+    @JoinColumn()
+    @OneToOne(() => StoreEntity, store => store.user)
+    store: StoreEntity
+
     @BeforeInsert()
     async hashPassword(): Promise<void> {
-        this.password = await bcrypt.hash(this.password, 10);
+        this.password = await bcrypt.hash(this.password || examplePassword, 10);
     }
 }

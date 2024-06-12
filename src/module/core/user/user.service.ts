@@ -25,7 +25,7 @@ export class UserService extends BaseService<UserEntity> {
   }
 
   async findByUsername(email: string): Promise<UserEntity> {
-    return this.repo.findOne({ where: { email } });
+    return this.repo.findOne({ email });
   }
 
   async updateRefreshToken(userId: any, refreshToken: string): Promise<void> {

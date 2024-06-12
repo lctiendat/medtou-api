@@ -5,6 +5,8 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { StoreModule } from './module/main/store/store.module';
+import { ProductModule } from './module/main/product/product.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { ConfigModule } from '@nestjs/config';
     }),
     CategoryModule,
     UserModule,
+    StoreModule,
+    ProductModule,
   ],
   controllers: [],
   providers: [],

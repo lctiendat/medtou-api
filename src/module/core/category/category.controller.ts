@@ -4,6 +4,7 @@ import { CreateCategoryDto, PaginationQueryDto, UpdateCategoryDto } from '@dto';
 import { Route } from 'src/shared/decorate/route.decorate';
 import { JwtAuthGuard } from '../user/guard/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { CategoryEntity } from '@entity';
 
 @Route('categories')
 export class CategoryController {
@@ -14,7 +15,7 @@ export class CategoryController {
   @Post()
   async create(@Request() req: any, @Body() body: CreateCategoryDto): Promise<any> {
 
-    const data = await this.categoryService.create(body, req);
+    const data: CategoryEntity = await this.categoryService.create(body, req);
     return {
       message: 'Create category successful',
       data
@@ -28,16 +29,20 @@ export class CategoryController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.categoryService.findOne(+id);
+    return this.categoryService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
-    return this.categoryService.update(+id, updateCategoryDto);
+  update(@Request() req: any, @Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
+    return this.categoryService.update(id, req, updateCategoryDto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categoryService.remove(+id);
+  remove(@Request() req: any, @Param('id') id: string) {
+    return this.categoryService.remove(id, req);
   }
 }

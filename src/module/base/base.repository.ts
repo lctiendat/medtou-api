@@ -21,14 +21,15 @@ export class BaseRepository<T extends ObjectLiteral> extends Repository<T> {
         return super.find(mergedOptions);
     }
 
-    findById(id: string | number | Date | ObjectLiteral, options?: any): Promise<T> {
+    findById(id: string | number | Date | ObjectLiteral, options?: any, relations: Array<string> = []): Promise<T> {
         const mergedOptions: FindOneOptions<T> = {
             ...options,
             where: {
                 ...(options || {}),
                 isDeleted: false,
                 id
-            }
+            },
+            relations
         };
         return super.findOne(mergedOptions);
     }

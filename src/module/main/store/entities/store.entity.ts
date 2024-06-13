@@ -1,8 +1,8 @@
-import { BaseEntity, UserEntity } from "@entity";
+import { BaseEntity, ProductEntity, UserEntity } from "@entity";
 import { faker } from "@faker-js/faker";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsOptional } from "class-validator";
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 
 @Entity('stores')
 export class StoreEntity extends BaseEntity {
@@ -30,4 +30,7 @@ export class StoreEntity extends BaseEntity {
     @JoinColumn()
     @OneToOne((): typeof UserEntity => UserEntity, (user) => user.store)
     user: UserEntity
+
+    @OneToMany(() => ProductEntity, product => product.store)
+    product: ProductEntity[]
 }

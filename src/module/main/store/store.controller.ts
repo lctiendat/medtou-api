@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, SetMetadata } from '@nestjs/common';
 import { StoreService } from './store.service';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
@@ -6,30 +6,45 @@ import { Route } from 'src/shared/decorate/route.decorate';
 
 @Route('stores')
 export class StoreController {
-  constructor(private readonly storeService: StoreService) {}
- 
+  constructor(private readonly storeService: StoreService) { }
+
   @Post()
-  create(@Body() createStoreDto: CreateStoreDto) {
-    return this.storeService.create(createStoreDto);
+  async create(@Body() createStoreDto: CreateStoreDto) {
+    return {
+      message: 'Create store successful',
+      data: await this.storeService.create(createStoreDto)
+    }
   }
 
   @Get()
-  findAll() {
-    return this.storeService.findAll();
+  async findAll() {
+    return {
+      message: "Get all store successfully",
+      data: await this.storeService.findAll()
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.storeService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return {
+      message: "Get store successfully",
+      data: await this.storeService.findOne(id)
+    }
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStoreDto: UpdateStoreDto) {
-    return this.storeService.update(+id, updateStoreDto);
+  async update(@Param('id') id: string, @Body() updateStoreDto: UpdateStoreDto) {
+    return {
+      message: "Update store successfully",
+      data: await this.storeService.update(id, updateStoreDto)
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.storeService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return {
+      message: "Delete store successfully",
+      data: await this.storeService.remove(id)
+    }
   }
 }

@@ -1,8 +1,8 @@
-import { BaseEntity } from "@entity";
+import { BaseEntity, ProductEntity } from "@entity";
 import { faker } from "@faker-js/faker";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsOptional, IsString, IsUUID } from "class-validator";
-import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, OneToOne } from "typeorm";
 
 @Entity('categories')
 export class CategoryEntity extends BaseEntity {
@@ -42,5 +42,8 @@ export class CategoryEntity extends BaseEntity {
 
     @OneToMany(() => CategoryEntity, category => category.parent)
     children: CategoryEntity[];
+
+    @OneToOne(() => ProductEntity, product => product.category)
+    product: ProductEntity[];
 
 } 

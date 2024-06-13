@@ -1,4 +1,4 @@
-import { BadRequestException, Body, NotFoundException, Post, Request, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, NotFoundException, Post, Query, Request, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import * as bcrypt from 'bcrypt';
 import { AuthService, UserService } from "@service";
@@ -28,10 +28,9 @@ export class AuthController {
         };
     }
 
-    @Post('signin')
-    async login(@Body() body: SigninDto): Promise<UserEntity | any> {
-
-        const data = await this.authService.signin(body)
+    @Post('signin?')
+    async login(@Body() body: SigninDto, @Query('role') role: number): Promise<UserEntity | any> {
+        const data = await this.authService.signin(body, role)
 
         return {
             message: 'Login successful',
@@ -44,7 +43,7 @@ export class AuthController {
     @Post('refresh')
     async refresh(@Request() req: any, @Body() body: TokenDto): Promise<any> {
         console.log(req.user);
-        
+
         const data = await this.authService.getAccessToken(req, body)
         return {
             message: 'Get access token successful',

@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { BaseService } from '@service';
@@ -49,15 +49,33 @@ export class StoreService extends BaseService<StoreEntity> {
     return this.repo.find({}, ['user'])
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} store`;
+  async findOne(id: string) {
+    const data = await this.repo.findById(id, {}, ['user'])
+    if (!!!data) {
+      throw new NotFoundException('Store not found')
+    }
+    return data
+
   }
 
-  update(id: number, updateStoreDto: UpdateStoreDto) {
-    return `This action updates a #${id} store`;
+  async update(id: string, body: UpdateStoreDto) {
+    const { name, phoneNumber, ...dataStore } = body
+
+    const data = await this.repo.findById(id, {}, ['user'])
+    if (!!!data) {
+      throw new NotFoundException('Store not found')
+    }
+    await this.repo.update(id, dataStore)
+    await this.userRepo.update(data.user.id, { name, phoneNumber })
+    return data
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} store`;
+  async remove(id: string) {
+    const data = await this.repo.findById(id, {}, ['user'])
+    if (!!!data) {
+      throw new NotFoundException('Store not found')
+    }
+    await this.repo.delete(id)
+    return null
   }
 }

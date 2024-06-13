@@ -8,6 +8,7 @@ import { UserRepository } from '@repository';
 import { SignupDto, SigninDto, TokenDto } from '@dto';
 import { JwtService } from '@nestjs/jwt';
 import { envConfig } from '@setup';
+import { ROLE } from 'src/setup/enum';
 
 @Injectable()
 export class AuthService extends BaseService<UserEntity> {
@@ -37,12 +38,14 @@ export class AuthService extends BaseService<UserEntity> {
     return await this.repo.save(newUser)
   }
 
-  async signin(data: SigninDto): Promise<any> {
+  async signin(data: SigninDto, role: any): Promise<any> {
 
-    const user: UserEntity = await this.userService.findByUsername(data.email)
+    const user: UserEntity = await this.repo.findOne({
+      email: data.email,
+      role
+    }) 
 
     if (!!!user) {
-
       throw new NotFoundException(`Email ${data.email} not found`)
     }
     const isMatch: boolean = await bcrypt.compare(data.password, user.password)

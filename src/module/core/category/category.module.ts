@@ -8,9 +8,10 @@ import { CategoryRepository, CategoryLogRepository } from '@repository';
 import { JwtModule } from '@nestjs/jwt';
 import { envConfig } from '@setup';
 import { PassportModule } from '@nestjs/passport';
+import { ProductEntity } from '@entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CategoryEntity, CategoryLogEntity]),
+  imports: [TypeOrmModule.forFeature([CategoryEntity, CategoryLogEntity, ProductEntity]),
   PassportModule.register({ defaultStrategy: 'jwt' }),
   JwtModule.register({
     secret: envConfig.JWT_ACCESS_SECRET,

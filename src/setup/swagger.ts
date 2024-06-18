@@ -7,8 +7,8 @@ export default function setupSwagger(app: INestApplication): void {
   const documentBuilder = new DocumentBuilder()
     .setTitle('API')
     .setDescription(
-      'The Medifast API description',
-    ).setVersion('1.0')
+      'The MedToU API description',
+    ).setVersion('2.0')
     .addBearerAuth(
       {
         type: 'http',

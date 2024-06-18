@@ -1,6 +1,6 @@
 import { Logger, Module } from '@nestjs/common';
 import { envConfig } from './setup/env';
-import { CategoryModule, UserModule } from '@module';
+import { CartModule, CategoryModule, UserModule } from '@module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -32,6 +32,7 @@ import { ProductModule } from './module/main/product/product.module';
     UserModule,
     StoreModule,
     ProductModule,
+    CartModule,
   ],
   controllers: [],
   providers: [],

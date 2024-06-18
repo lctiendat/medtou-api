@@ -38,17 +38,18 @@ export class ProductController {
 
   @Patch(':id')
   @ApiBearerAuth('access-token')
-  @UseGuards(JwtAuthGuard, RolesGuard) 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(ROLE.STORE)
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(id, updateProductDto);
+  async update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto, @Request() req: any) {
+    return await this.productService.update(id, updateProductDto, req)
   }
 
   @Delete(':id')
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(ROLE.STORE)
-  remove(@Param('id') id: string) {
-    return this.productService.remove(id);
+  async remove(@Param('id') id: string) {
+    await this.productService.delete(id);
+    return
   }
 }

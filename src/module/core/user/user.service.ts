@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { BaseService } from '@service';
 import { UserRepository } from '@repository';
 import { PickType } from '@nestjs/swagger';
+import { ROLE } from 'src/setup/enum';
 
 @Injectable()
 export class UserService extends BaseService<UserEntity> {
@@ -25,7 +26,7 @@ export class UserService extends BaseService<UserEntity> {
   }
 
   async findByUsername(email: string): Promise<UserEntity> {
-    return this.repo.findOne({ email });
+    return this.repo.findOne({ email , role : ROLE.USER });
   }
 
   async updateRefreshToken(userId: any, refreshToken: string): Promise<void> {

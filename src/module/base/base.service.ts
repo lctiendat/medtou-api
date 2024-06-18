@@ -29,5 +29,14 @@ export class BaseService<T extends ObjectLiteral> {
         }
         return await this.repo.delete(id, options)
     }
+
+    async deleteHard(id: string) {
+        const data: T = await this.repo.findById(id)
+        if (!!!data) {
+            throw new NotFoundException('Data not found')
+        }
+        await this.repo.deleteHard(id)
+        return null
+    }
 }
 

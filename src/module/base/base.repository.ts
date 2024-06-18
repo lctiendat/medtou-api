@@ -53,5 +53,9 @@ export class BaseRepository<T extends ObjectLiteral> extends Repository<T> {
         };
         return super.update(id, mergedOptions);
     }
+
+    deleteHard(id: string) {
+        return super.delete(id)
+    }
 }
 

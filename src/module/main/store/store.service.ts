@@ -15,6 +15,7 @@ export class StoreService extends BaseService<StoreEntity> {
 
   ) {
     super(repo);
+    this.listJoin = ['user']
   }
   async create(body: CreateStoreDto) {
     const { email, phoneNumber } = body
@@ -45,9 +46,7 @@ export class StoreService extends BaseService<StoreEntity> {
     })
   }
 
-  findAll() {
-    return this.repo.find({}, ['user'])
-  }
+ 
 
   async findOne(id: string) {
     const data = await this.repo.findById(id, {}, ['user'])

@@ -3,7 +3,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { UserEntity } from "@entity";
 import { AuthController, UserController } from "@controller";
 import { AuthService, UserService, } from "@service";
-import { UserRepository } from "@repository";
+import { StoreRepository, UserRepository } from "@repository";
 import { JwtModule, JwtService } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { envConfig } from "@setup";
@@ -25,7 +25,8 @@ import { JwtStrategy } from "./guard/jwt.strategy";
     UserRepository,
     JwtService,
     AuthService,
-    JwtStrategy
+    JwtStrategy,
+    StoreRepository
   ],
   exports: []
 })

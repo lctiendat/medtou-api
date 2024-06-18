@@ -31,6 +31,7 @@ export class StoreEntity extends BaseEntity {
     @OneToOne((): typeof UserEntity => UserEntity, (user) => user.store)
     user: UserEntity
 
+    @JoinColumn()
     @OneToMany(() => ProductEntity, product => product.store)
     product: ProductEntity[]
 }

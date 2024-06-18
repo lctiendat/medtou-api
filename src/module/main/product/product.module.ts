@@ -3,13 +3,21 @@ import { ProductService } from './product.service';
 import { ProductController } from '@controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductEntity } from '@entity';
-import { ProductRepository } from '@repository';
+import { CategoryRepository, ProductRepository } from '@repository';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { envConfig } from '@setup';
 
 @Module({
-  imports:[
-    TypeOrmModule.forFeature([ProductEntity])
+  imports: [
+    TypeOrmModule.forFeature([ProductEntity]),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.register({
+      secret: envConfig.JWT_ACCESS_SECRET,
+      signOptions: { expiresIn: envConfig.JWT_ACCESS_TIME },
+    })
   ],
   controllers: [ProductController],
-  providers: [ProductService,ProductRepository],
+  providers: [ProductService, ProductRepository,CategoryRepository],
 })
-export class ProductModule {}
+export class ProductModule { }

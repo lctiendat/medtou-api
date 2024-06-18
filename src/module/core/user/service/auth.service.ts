@@ -4,7 +4,7 @@ import { BadRequestException, ConflictException, Injectable, NotFoundException }
 import { UserEntity } from '@entity';
 import * as bcrypt from 'bcrypt';
 import { BaseService, UserService } from '@service';
-import { UserRepository } from '@repository';
+import { StoreRepository, UserRepository } from '@repository';
 import { SignupDto, SigninDto, TokenDto } from '@dto';
 import { JwtService } from '@nestjs/jwt';
 import { envConfig } from '@setup';
@@ -15,6 +15,7 @@ export class AuthService extends BaseService<UserEntity> {
   constructor(
     public readonly repo: UserRepository,
     public userService: UserService,
+    public readonly storeRepo: StoreRepository,
     public jwtService: JwtService
   ) {
     super(repo)
@@ -43,7 +44,7 @@ export class AuthService extends BaseService<UserEntity> {
     const user: UserEntity = await this.repo.findOne({
       email: data.email,
       role
-    }) 
+    })
 
     if (!!!user) {
       throw new NotFoundException(`Email ${data.email} not found`)
@@ -52,7 +53,11 @@ export class AuthService extends BaseService<UserEntity> {
     if (!isMatch) {
       throw new BadRequestException('Password is incorrect')
     }
-    const payload = { username: user.email, id: user.id };
+    if (user.role === ROLE.STORE) {
+      const store = await this.storeRepo.findOne({ userId: user.id })
+      user.id = store.id
+    }
+    const payload = { username: user.email, id: user.id, role: user.role };
     const accessToken: string = this.jwtService.sign(payload, { secret: 'access_secret', expiresIn: '15m' });
     const refreshToken: string = this.jwtService.sign(payload, { secret: 'refresh_secret', expiresIn: '7d' });
 

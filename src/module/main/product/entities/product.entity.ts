@@ -59,10 +59,10 @@ export class ProductEntity extends BaseEntity {
     storeId: string
 
     @JoinColumn()
-    @OneToOne((): typeof CategoryEntity => CategoryEntity, category => category.product)
+    @OneToOne((): typeof CategoryEntity => CategoryEntity, (category: CategoryEntity) => category.product)
     category: CategoryEntity
 
     @JoinColumn()
-    @ManyToOne((): typeof StoreEntity => StoreEntity, store => store.product)
+    @OneToOne((): typeof StoreEntity => StoreEntity, (store: StoreEntity) => store.product)
     store: StoreEntity
 }

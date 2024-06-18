@@ -44,6 +44,6 @@ export class CategoryEntity extends BaseEntity {
     children: CategoryEntity[];
 
     @OneToOne(() => ProductEntity, product => product.category)
-    product: ProductEntity[];
+    product: ProductEntity;
 
 } 

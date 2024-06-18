@@ -28,7 +28,7 @@ export class AuthController {
         };
     }
 
-    @Post('signin?')
+    @Post('signin')
     async login(@Body() body: SigninDto, @Query('role') role: number): Promise<UserEntity | any> {
         const data = await this.authService.signin(body, role)
 

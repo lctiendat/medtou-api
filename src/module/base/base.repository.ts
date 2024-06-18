@@ -3,6 +3,7 @@ import { FindManyOptions, FindOneOptions, ObjectLiteral, Repository } from "type
 
 @Injectable()
 export class BaseRepository<T extends ObjectLiteral> extends Repository<T> {
+
     find(options: any = {}, relations: Array<string> = []): Promise<T[]> {
         const { skip, take, ...otherOptions } = options;
         const mergedOptions: FindManyOptions<T> = {

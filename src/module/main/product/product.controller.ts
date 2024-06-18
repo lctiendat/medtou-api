@@ -1,18 +1,29 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Route } from 'src/shared/decorate/route.decorate';
 import { RolesGuard } from 'src/module/core/user/guard/role.guard';
+import { JwtAuthGuard } from 'src/module/core/user/guard/jwt-auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { Roles } from 'src/module/core/user/guard/roles.decorator';
+import { ROLE } from 'src/setup/enum';
+import { ProductEntity } from '@entity';
 
 @Route('products')
-@UseGuards(new RolesGuard)
 export class ProductController {
   constructor(private readonly productService: ProductService) { }
 
   @Post()
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productService.create(createProductDto);
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(ROLE.STORE)
+  async create(@Body() createProductDto: CreateProductDto, @Request() req: any): Promise<ProductEntity | any> {
+    const data = await this.productService.create(createProductDto, req)
+    return {
+      message: 'Create product successful',
+      data
+    }
   }
 
   @Get()
@@ -22,16 +33,22 @@ export class ProductController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.productService.findOne(+id);
+    return this.productService.findOne(id);
   }
 
   @Patch(':id')
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard, RolesGuard) 
+  @Roles(ROLE.STORE)
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(+id, updateProductDto);
+    return this.productService.update(id, updateProductDto);
   }
 
   @Delete(':id')
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(ROLE.STORE)
   remove(@Param('id') id: string) {
-    return this.productService.remove(+id);
+    return this.productService.remove(id);
   }
 }

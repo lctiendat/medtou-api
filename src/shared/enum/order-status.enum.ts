@@ -1,0 +1,9 @@
+
+export const enum EOrderStatus {
+    PENDING = 'PENDING',
+    CONFIRMED = 'CONFIRMED',
+    DELIVERED = 'DELIVERED',
+    CANCELED = 'CANCELED',
+    REFUNDED = 'REFUNDED',
+    REJECTED = 'REJECTED',
+}

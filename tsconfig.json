@@ -28,7 +28,9 @@
       "@module": ["src/module"],
       "@shared": ["src/shared"],
       "@util": ["src/shared/util"],
-      "@filter": ["src/shared/filter"]
+      "@filter": ["src/shared/filter"],
+      "@enum": ["src/shared/enum"]
+
     }
   }
 }

@@ -18,6 +18,7 @@ export class CartService extends BaseService<CartEntity> {
       throw new BadRequestException('Quantity must be greater than zero')
     }
     const product: ProductEntity = await this.productRepo.findById(body.productId)
+
     if(!!!product) {
       throw new NotFoundException('Product not found')
     }
@@ -41,7 +42,6 @@ export class CartService extends BaseService<CartEntity> {
  async update(id: string, body: UpdateCartDto, req: any) {
       const data: CartEntity = await this.findOne(id)
       const product: ProductEntity = await this.productRepo.findById(body.productId)
-      console.log(product);
       
       if(!!!product) {
         throw new NotFoundException('Product not found')
@@ -52,9 +52,5 @@ export class CartService extends BaseService<CartEntity> {
       data.quantity = body.quantity
       await this.repo.save(data)
       return data
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} cart`;
   }
 }

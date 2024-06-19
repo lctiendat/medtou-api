@@ -1,4 +1,4 @@
-import { BaseEntity, CartEntity, CategoryEntity, StoreEntity } from "@entity";
+import { BaseEntity, CartEntity, CategoryEntity, OrderProductEntity, StoreEntity } from "@entity";
 import { faker } from "@faker-js/faker";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } from "class-validator";
@@ -48,7 +48,7 @@ export class ProductEntity extends BaseEntity {
     @Column()
     @IsNotEmpty()
     @IsUUID()
-    @ApiProperty({ 
+    @ApiProperty({
         example: faker.string.uuid()
     })
     categoryId: string
@@ -73,5 +73,8 @@ export class ProductEntity extends BaseEntity {
     @OneToOne((): typeof CartEntity => CartEntity, (cart: CartEntity) => cart.product)
     cart: CartEntity
 
-    
+    @OneToOne((): typeof OrderProductEntity => OrderProductEntity, (odp: OrderProductEntity) => odp.product)
+    orderProduct: OrderProductEntity
+
+
 }

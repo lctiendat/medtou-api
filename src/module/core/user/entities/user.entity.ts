@@ -1,4 +1,4 @@
-import { BaseEntity, CartEntity, StoreEntity } from "@entity";
+import { BaseEntity, CartEntity, OrderEntity, StoreEntity } from "@entity";
 import { da, faker } from "@faker-js/faker";
 import { ApiProperty } from "@nestjs/swagger";
 import { Exclude, Expose } from "class-transformer";
@@ -80,6 +80,10 @@ export class UserEntity extends BaseEntity {
     @JoinColumn()
     @OneToOne(() => CartEntity, cart => cart.user)
     cart: CartEntity
+
+    @JoinColumn()
+    @OneToOne(() => OrderEntity, order => order.user)
+    order: OrderEntity
 
     @BeforeInsert()
     async hashPassword(): Promise<void> {

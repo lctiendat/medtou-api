@@ -1,4 +1,4 @@
-import { BaseEntity, ProductEntity, UserEntity } from "@entity";
+import { BaseEntity, OrderEntity, ProductEntity, UserEntity } from "@entity";
 import { faker } from "@faker-js/faker";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsOptional } from "class-validator";
@@ -34,4 +34,8 @@ export class StoreEntity extends BaseEntity {
     @JoinColumn()
     @OneToMany(() => ProductEntity, product => product.store)
     product: ProductEntity[]
+
+    @JoinColumn()
+    @OneToOne(()=> OrderEntity, order => order.store)
+    order: OrderEntity
 }

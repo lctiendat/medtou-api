@@ -1,16 +1,25 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Route } from 'src/shared/decorate/route.decorate';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/module/core/user/guard/jwt-auth.guard';
+import { RolesGuard } from 'src/module/core/user/guard/role.guard';
+import { Roles } from 'src/module/core/user/guard/roles.decorator';
+import { ROLE } from 'src/setup/enum';
+
 
 @Route('order')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(private readonly orderService: OrderService) { }
 
   @Post()
-  create(@Body() createOrderDto: CreateOrderDto) {
-    return this.orderService.create(createOrderDto);
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(ROLE.USER)
+  create(@Body() body: CreateOrderDto, @Request() req: any) {
+    return this.orderService.create(body, req);
   }
 
   @Get()
@@ -20,7 +29,7 @@ export class OrderController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.orderService.findOne(+id);
+    return this.orderService.findOne(id);
   }
 
   @Patch(':id')

@@ -1,7 +1,7 @@
 import { BaseEntity, OrderProductEntity, StoreEntity, UserEntity } from "@entity";
 import { faker } from "@faker-js/faker";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsOptional, IsString, IsUUID } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from "class-validator";
 import { EOrderStatus } from "src/enum";
 import { Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
 
@@ -12,6 +12,11 @@ export class OrderEntity extends BaseEntity {
     userId: string;
 
     @Column()
+    @IsNotEmpty()
+    @IsUUID()
+    @ApiProperty({
+        example: faker.string.uuid()
+    })
     storeId: string;
 
     @Column({

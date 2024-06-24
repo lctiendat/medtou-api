@@ -11,6 +11,7 @@ import { StoreRepository, UserRepository } from '@repository';
   ],
   controllers: [StoreController],
   providers: [StoreService, StoreRepository,UserRepository],
+  exports : [StoreService]
 })
 export class StoreModule {
 

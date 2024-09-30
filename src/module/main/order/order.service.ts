@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { BaseService, StoreService } from '@service';
-import { OrderEntity, OrderProductEntity } from '@entity';
-import { OrderProductRepository, OrderRepository, ProductRepository, StoreRepository } from '@repository';
+import { OrderEntity } from '@entity';
+import {  OrderRepository, ProductRepository, StoreRepository } from '@repository';
 import { DataSource, EntityManager } from 'typeorm';
 
 @Injectable()
@@ -11,7 +11,6 @@ export class OrderService extends BaseService<OrderEntity> {
   constructor(
     public readonly repo: OrderRepository,
     public readonly storeRepo: StoreRepository,
-    public readonly orderProductRepo: OrderProductRepository,
     public readonly productRepo: ProductRepository,
     public storeSevice: StoreService,
     public dataSource: DataSource
@@ -20,7 +19,7 @@ export class OrderService extends BaseService<OrderEntity> {
   }
   async create(body: CreateOrderDto, req) {
     const { products, ...data } = body
-    await this.storeSevice.findOne(data.storeId);
+    // await this.storeSevice.findOne(data.storeId);
 
     if (products && products.length > 0) {
       for (let i = 0; i < products.length; i++) {
@@ -34,7 +33,7 @@ export class OrderService extends BaseService<OrderEntity> {
           throw new NotFoundException('Quantity not enough');
         }
 
-        const productStore = await this.productRepo.findOne({ id: products[i].productId, storeId: data.storeId });
+        const productStore = await this.productRepo.findOne({ id: products[i].productId});
 
         if (!productStore) {
           throw new NotFoundException('Product not in store');
@@ -46,13 +45,6 @@ export class OrderService extends BaseService<OrderEntity> {
 
         for (let i = 0; i < products.length; i++) {
           const product = await this.productRepo.findById(products[i].productId);
-
-          await entityManager.save(entityManager.create(OrderProductEntity, {
-            orderId: order.id,
-            productId: product.id,
-            quantity: products[i].quantity,
-            price: product.price
-          }))
         }
         return order;
       })

@@ -11,4 +11,5 @@ export enum ROLE {
     USER = 1,
     STORE = 2,
     STAFF = 3,
-}
+    DRIVER = 4
+}  

@@ -39,11 +39,10 @@ export class AuthService extends BaseService<UserEntity> {
     return await this.repo.save(newUser)
   }
 
-  async signin(data: SigninDto, role: any): Promise<any> {
+  async signin(data: SigninDto): Promise<any> {
 
     const user: UserEntity = await this.repo.findOne({
       email: data.email,
-      role
     })
 
     if (!!!user) {
@@ -53,12 +52,8 @@ export class AuthService extends BaseService<UserEntity> {
     if (!isMatch) {
       throw new BadRequestException('Password is incorrect')
     }
-    if (user.role === ROLE.STORE) {
-      const store = await this.storeRepo.findOne({ userId: user.id })
-      user.id = store.id
-    }
-    const payload = { username: user.email, id: user.id, role: user.role };
-    const accessToken: string = this.jwtService.sign(payload, { secret: 'access_secret', expiresIn: '15m' });
+    const payload = { username: user.email, id: user.id };
+    const accessToken: string = this.jwtService.sign(payload, { secret: 'access_secret', expiresIn: '1d' });
     const refreshToken: string = this.jwtService.sign(payload, { secret: 'refresh_secret', expiresIn: '7d' });
 
     this.updateRefreshToken(user?.id, refreshToken);

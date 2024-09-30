@@ -28,14 +28,8 @@ export class StoreEntity extends BaseEntity {
     addressId: string
 
     @JoinColumn()
-    @OneToOne((): typeof UserEntity => UserEntity, (user) => user.store)
-    user: UserEntity
-
-    @JoinColumn()
     @OneToMany(() => ProductEntity, product => product.store)
     product: ProductEntity[]
 
-    @JoinColumn()
-    @OneToOne(()=> OrderEntity, order => order.store)
-    order: OrderEntity
+    
 }

@@ -1,4 +1,4 @@
-import { BaseEntity, OrderProductEntity, StoreEntity, UserEntity } from "@entity";
+import { BaseEntity, OrderItemEntity, StoreEntity, UserEntity } from "@entity";
 import { faker } from "@faker-js/faker";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsOptional, IsString, IsUUID } from "class-validator";
@@ -10,14 +10,6 @@ export class OrderEntity extends BaseEntity {
 
     @Column()
     userId: string;
-
-    @Column()
-    @IsNotEmpty()
-    @IsUUID()
-    @ApiProperty({
-        example: faker.string.uuid()
-    })
-    storeId: string;
 
     @Column({
         default: EOrderStatus.PENDING
@@ -55,14 +47,6 @@ export class OrderEntity extends BaseEntity {
     refundedReason: string
 
     @JoinColumn()
-    @OneToOne(() => UserEntity, (user: UserEntity) => user.order)
-    user: UserEntity
-
-    @JoinColumn()
-    @OneToOne(() => StoreEntity, (store: StoreEntity) => store.order)
-    store: StoreEntity
-
-    @JoinColumn()
-    @OneToMany(() => OrderProductEntity, (odp: OrderProductEntity) => odp.order)
-    orderProduct: OrderProductEntity
+    @OneToMany(() => OrderItemEntity, (odp: OrderItemEntity) => odp.order)
+    orderItem: OrderItemEntity[]
 }

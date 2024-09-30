@@ -1,9 +1,9 @@
-import { BaseEntity, CartEntity, OrderEntity, StoreEntity } from "@entity";
+import { BaseEntity, BookingEntity, CartEntity, OrderEntity, StoreEntity } from "@entity";
 import { da, faker } from "@faker-js/faker";
 import { ApiProperty } from "@nestjs/swagger";
 import { Exclude, Expose } from "class-transformer";
 import { IsDateString, IsEmail, IsNotEmpty, IsNumberString, IsOptional, IsString } from "class-validator";
-import { BeforeInsert, Column, Entity, JoinColumn, OneToOne } from "typeorm";
+import { BeforeInsert, Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
 import * as bcrypt from 'bcrypt';
 import { ROLE } from "src/setup/enum";
 
@@ -73,20 +73,11 @@ export class UserEntity extends BaseEntity {
     @IsString()
     refreshToken: string;
 
-    @JoinColumn()
-    @OneToOne(() => StoreEntity, store => store.user)
-    store: StoreEntity
-
-    @JoinColumn()
-    @OneToOne(() => CartEntity, cart => cart.user)
-    cart: CartEntity
-
-    @JoinColumn()
-    @OneToOne(() => OrderEntity, order => order.user)
-    order: OrderEntity
-
     @BeforeInsert()
     async hashPassword(): Promise<void> {
         this.password = await bcrypt.hash(this.password || examplePassword, 10);
     }
+
+    @OneToMany(() => BookingEntity, booking => booking.userID)
+    bookings: BookingEntity[];
 }

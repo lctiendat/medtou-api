@@ -65,7 +65,7 @@ export class StoreService extends BaseService<StoreEntity> {
       throw new NotFoundException('Store not found')
     }
     await this.repo.update(id, dataStore)
-    await this.userRepo.update(data.user.id, { name, phoneNumber })
+    // await this.userRepo.update(data.user.id, { name, phoneNumber })
     return data
   }
 

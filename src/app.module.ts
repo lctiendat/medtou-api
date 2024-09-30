@@ -1,17 +1,19 @@
 import { Logger, Module } from '@nestjs/common';
 import { envConfig } from './setup/env';
-import { CartModule, CategoryModule, OrderModule, UserModule } from '@module';
+import { BookingModule, CartModule, CategoryModule, DriverModule, OrderModule, UserModule } from '@module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { StoreModule } from './module/main/store/store.module';
 import { ProductModule } from './module/main/product/product.module';
+import { AppGateway } from './app.gateway';
+import { DriverRepository } from '@repository';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,
+      isGlobal: true, 
     }),
     TypeOrmModule.forRoot({
       'type': 'mysql',
@@ -34,8 +36,13 @@ import { ProductModule } from './module/main/product/product.module';
     ProductModule,
     CartModule,
     OrderModule,
+    BookingModule,
+    DriverModule
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    AppGateway,
+    DriverRepository
+  ],
 })
 export class AppModule { } 

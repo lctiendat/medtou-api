@@ -27,10 +27,6 @@ export class CartEntity extends BaseEntity {
     userId : string
 
     @JoinColumn()
-    @OneToOne((): typeof UserEntity => UserEntity, (user) => user.cart)
-    user: UserEntity;
-
-    @JoinColumn()
     @OneToMany((): typeof ProductEntity => ProductEntity, (product) => product.cart)
     product: ProductEntity;
 }

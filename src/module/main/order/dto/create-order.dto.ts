@@ -1,4 +1,4 @@
-import { OrderEntity, OrderProductEntity, ProductEntity } from "@entity";
+import { OrderEntity, ProductEntity } from "@entity";
 import { faker } from "@faker-js/faker";
 import { ApiProperty, PickType } from "@nestjs/swagger";
 import { Column } from "typeorm";
@@ -10,7 +10,7 @@ interface IProductDTO {
     quantity: number
 }
 
-export class CreateOrderDto extends PickType(OrderEntity, ['note', 'storeId']) {
+export class CreateOrderDto extends PickType(OrderEntity, ['note']) {
     @Column()
     @IsNotEmpty()
     @IsArray()

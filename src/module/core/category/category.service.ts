@@ -15,6 +15,7 @@ export class CategoryService extends BaseService<CategoryEntity> {
   ) {
     super(repo)
   }
+  
   async create(data: CreateCategoryDto, req): Promise<CategoryEntity> {
     return await this.dataSource.transaction(async (entityManager) => {
       if (!!data.parentId) {

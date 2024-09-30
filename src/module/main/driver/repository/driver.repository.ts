@@ -1,14 +1,14 @@
 import { BaseRepository } from "@repository";
-import { CategoryEntity, OrderProductEntity } from "@entity";
+import { DriverEntity } from "@entity";
 import { DataSource } from "typeorm";
 import { Injectable } from "@nestjs/common";
 
 
 @Injectable()
-export class OrderProductRepository extends BaseRepository<OrderProductEntity> {
+export class DriverRepository extends BaseRepository<DriverEntity> {
     constructor(
         private readonly dataSource: DataSource
     ) {
-        super(OrderProductEntity, dataSource.createEntityManager());
+        super(DriverEntity, dataSource.createEntityManager());
     }
 }
